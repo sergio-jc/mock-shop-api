@@ -17,6 +17,9 @@ export class Product {
   @Field(() => Int)
   stock: number;
 
-  @Field()
-  category: string;
+  @Field(() => String, { nullable: true })
+  imageUrl: string | null;
+
+  @Field(() => Float, { nullable: true })
+  rating: number | null;
 }

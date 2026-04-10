@@ -1,10 +1,22 @@
-import { Args, ID, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  ID,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { Category } from './entities/category.entity';
 import { CategoriesService } from './categories.service';
+import { Product } from '../products/entities/product.entity';
+import { ProductsService } from '../products/products.service';
 
 @Resolver(() => Category)
 export class CategoriesResolver {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(
+    private readonly categoriesService: CategoriesService,
+    private readonly productsService: ProductsService,
+  ) {}
 
   @Query(() => [Category], { name: 'categories' })
   categories(): Category[] {
@@ -19,5 +31,10 @@ export class CategoriesResolver {
   @Query(() => Category, { name: 'categoryByName', nullable: true })
   categoryByName(@Args('name') name: string): Category | null {
     return this.categoriesService.findByName(name) ?? null;
+  }
+
+  @ResolveField(() => [Product])
+  products(@Parent() category: Category): Product[] {
+    return this.productsService.findByCategoryId(category.id);
   }
 }

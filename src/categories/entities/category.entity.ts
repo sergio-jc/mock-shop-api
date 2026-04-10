@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Category {
@@ -10,7 +10,4 @@ export class Category {
 
   @Field(() => String, { nullable: true })
   description: string | null;
-
-  @Field(() => Int)
-  productCount: number;
 }

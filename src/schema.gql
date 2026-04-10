@@ -6,15 +6,47 @@ type Category {
   description: String
   id: ID!
   name: String!
-  productCount: Int!
+  products: [Product!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Order {
+  createdAt: DateTime!
+  id: ID!
+  items: [OrderItem!]!
+  status: OrderStatus!
+  total: Float!
+  updatedAt: DateTime!
+  user: User!
+}
+
+type OrderItem {
+  id: ID!
+  product: Product!
+  quantity: Int!
+  unitPrice: Float!
+}
+
+enum OrderStatus {
+  CANCELLED
+  COMPLETED
+  PENDING
+  PROCESSING
 }
 
 type Product {
-  category: String!
+  category: Category!
   description: String
   id: ID!
+  imageUrl: String
   name: String!
   price: Float!
+  rating: Float
+  reviews: [Review!]!
   stock: Int!
 }
 
@@ -22,6 +54,33 @@ type Query {
   categories: [Category!]!
   category(id: ID!): Category
   categoryByName(name: String!): Category
+  order(id: ID!): Order
+  orders: [Order!]!
   product(id: ID!): Product
   products: [Product!]!
+  review(id: ID!): Review
+  reviews: [Review!]!
+  user(id: ID!): User
+  users: [User!]!
+}
+
+type Review {
+  comment: String
+  createdAt: DateTime!
+  id: ID!
+  product: Product!
+  rating: Int!
+  title: String!
+  user: User!
+}
+
+type User {
+  createdAt: DateTime!
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+  lastVisit: DateTime
+  orders: [Order!]!
+  reviews: [Review!]!
 }
