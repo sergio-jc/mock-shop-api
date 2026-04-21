@@ -1,5 +1,6 @@
 import {
   Args,
+  Context,
   Float,
   ID,
   Parent,
@@ -7,21 +8,15 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { Product } from './entities/product.entity';
-import { ProductsService } from './products.service';
+import type { GqlContext } from '../dataloader/gql-context.interface';
 import { Category } from '../categories/entities/category.entity';
 import { Review } from '../reviews/entities/review.entity';
-import { ReviewsService } from '../reviews/reviews.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { NotFoundException } from '@nestjs/common';
+import { Product } from './entities/product.entity';
+import { ProductsService } from './products.service';
 
 @Resolver(() => Product)
 export class ProductsResolver {
-  constructor(
-    private readonly productsService: ProductsService,
-    private readonly reviewsService: ReviewsService,
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly productsService: ProductsService) {}
 
   @Query(() => [Product], { name: 'products' })
   products(): Promise<Product[]> {
@@ -34,25 +29,28 @@ export class ProductsResolver {
   }
 
   @ResolveField(() => Category)
-  async category(@Parent() product: Product): Promise<Category> {
-    const category = await this.prisma.category.findUnique({
-      where: { id: product.categoryId },
-    });
-    if (!category) {
-      throw new NotFoundException(
-        `Categoria no encontrada para el producto "${product.id}"`,
-      );
-    }
-    return category;
+  category(
+    @Parent() product: Product,
+    @Context() ctx: GqlContext,
+  ): Promise<Category> {
+    return ctx.loaders.categoryById.load(
+      product.categoryId,
+    ) as Promise<Category>;
   }
 
   @ResolveField(() => [Review])
-  reviews(@Parent() product: Product): Promise<Review[]> {
-    return this.reviewsService.findByProductId(product.id);
+  reviews(
+    @Parent() product: Product,
+    @Context() ctx: GqlContext,
+  ): Promise<Review[]> {
+    return ctx.loaders.reviewsByProductId.load(product.id) as Promise<Review[]>;
   }
 
   @ResolveField(() => Float, { nullable: true })
-  rating(@Parent() product: Product): Promise<number | null> {
-    return this.reviewsService.averageRatingByProductId(product.id);
+  rating(
+    @Parent() product: Product,
+    @Context() ctx: GqlContext,
+  ): Promise<number | null> {
+    return ctx.loaders.ratingByProductId.load(product.id);
   }
 }

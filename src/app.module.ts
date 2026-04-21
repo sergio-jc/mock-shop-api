@@ -7,6 +7,8 @@ import depthLimit from 'graphql-depth-limit';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DataloaderModule } from './dataloader/dataloader.module';
+import { DataloaderService } from './dataloader/dataloader.service';
 import { GqlThrottlerGuard } from './gql-throttler.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProductsModule } from './products/products.module';
@@ -26,20 +28,33 @@ import { OrdersModule } from './orders/orders.module';
       },
     ]),
     PrismaModule,
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    DataloaderModule,
+    // forRootAsync permite inyectar DataloaderService para crearlo por request.
+    // `driver` va fuera de useFactory (requisito de la API de NestJS GraphQL).
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile:
-        process.env.NODE_ENV === 'production'
-          ? true
-          : join(process.cwd(), 'src/schema.gql'),
-      sortSchema: true,
-      playground: false,
-      graphiql: true,
-      validationRules: [depthLimit(6)],
-      context: ({ req, res }: { req: unknown; res: unknown }) => ({ req, res }),
-      formatError: (error) => ({
-        message: error.message,
-        code: error.extensions?.code ?? 'INTERNAL_SERVER_ERROR',
+      imports: [DataloaderModule],
+      inject: [DataloaderService],
+      useFactory: (dataloaderService: DataloaderService) => ({
+        autoSchemaFile:
+          process.env.NODE_ENV === 'production'
+            ? true
+            : join(process.cwd(), 'src/schema.gql'),
+        sortSchema: true,
+        playground: false,
+        graphiql: true,
+        validationRules: [depthLimit(6)],
+        formatError: (error) => ({
+          message: error.message,
+          code: error.extensions?.code ?? 'INTERNAL_SERVER_ERROR',
+        }),
+        // Se llama una vez por request. Crea loaders frescos con caché aislado
+        // por request — nunca se comparte estado entre usuarios.
+        context: ({ req, res }: { req: unknown; res: unknown }) => ({
+          req,
+          res,
+          loaders: dataloaderService.createLoaders(),
+        }),
       }),
     }),
     ProductsModule,

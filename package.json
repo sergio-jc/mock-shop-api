@@ -41,6 +41,7 @@
     "@opentelemetry/semantic-conventions": "^1.40.0",
     "@prisma/adapter-libsql": "^7.7.0",
     "@prisma/client": "^7.7.0",
+    "dataloader": "^2.2.3",
     "graphql": "^16.13.2",
     "graphql-depth-limit": "^1.1.0",
     "helmet": "^8.1.0",

@@ -1,5 +1,6 @@
 import {
   Args,
+  Context,
   Float,
   ID,
   Parent,
@@ -7,21 +8,16 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import type { GqlContext } from '../dataloader/gql-context.interface';
 import { Product } from '../products/entities/product.entity';
-import { ProductsService } from '../products/products.service';
 import { User } from '../users/entities/user.entity';
-import { UsersService } from '../users/users.service';
 import { OrderItem } from './entities/order-item.entity';
 import { Order } from './entities/order.entity';
 import { OrdersService } from './orders.service';
 
 @Resolver(() => Order)
 export class OrdersResolver {
-  constructor(
-    private readonly ordersService: OrdersService,
-    private readonly usersService: UsersService,
-    private readonly productsService: ProductsService,
-  ) {}
+  constructor(private readonly ordersService: OrdersService) {}
 
   @Query(() => [Order], { name: 'orders' })
   orders(): Promise<Order[]> {
@@ -34,27 +30,31 @@ export class OrdersResolver {
   }
 
   @ResolveField(() => User)
-  async user(@Parent() order: Order): Promise<User> {
-    return this.usersService.findOneOrFail(order.userId);
+  user(@Parent() order: Order, @Context() ctx: GqlContext): Promise<User> {
+    return ctx.loaders.userById.load(order.userId) as Promise<User>;
   }
 
   @ResolveField(() => [OrderItem])
-  items(@Parent() order: Order): Promise<OrderItem[]> {
-    return this.ordersService.findItemsByOrderId(order.id);
+  items(
+    @Parent() order: Order,
+    @Context() ctx: GqlContext,
+  ): Promise<OrderItem[]> {
+    return ctx.loaders.itemsByOrderId.load(order.id) as Promise<OrderItem[]>;
   }
 
   @ResolveField(() => Float)
-  total(@Parent() order: Order): Promise<number> {
-    return this.ordersService.computeTotal(order.id);
+  total(@Parent() order: Order, @Context() ctx: GqlContext): Promise<number> {
+    return ctx.loaders.totalByOrderId.load(order.id);
   }
 }
 
 @Resolver(() => OrderItem)
 export class OrderItemsResolver {
-  constructor(private readonly productsService: ProductsService) {}
-
   @ResolveField(() => Product)
-  product(@Parent() item: OrderItem): Promise<Product> {
-    return this.productsService.findOneOrFail(item.productId);
+  product(
+    @Parent() item: OrderItem,
+    @Context() ctx: GqlContext,
+  ): Promise<Product> {
+    return ctx.loaders.productById.load(item.productId) as Promise<Product>;
   }
 }

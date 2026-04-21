@@ -1,25 +1,21 @@
 import {
   Args,
+  Context,
   ID,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import type { GqlContext } from '../dataloader/gql-context.interface';
 import { Product } from '../products/entities/product.entity';
-import { ProductsService } from '../products/products.service';
 import { User } from '../users/entities/user.entity';
-import { UsersService } from '../users/users.service';
 import { Review } from './entities/review.entity';
 import { ReviewsService } from './reviews.service';
 
 @Resolver(() => Review)
 export class ReviewsResolver {
-  constructor(
-    private readonly reviewsService: ReviewsService,
-    private readonly usersService: UsersService,
-    private readonly productsService: ProductsService,
-  ) {}
+  constructor(private readonly reviewsService: ReviewsService) {}
 
   @Query(() => [Review], { name: 'reviews' })
   reviews(): Promise<Review[]> {
@@ -32,12 +28,15 @@ export class ReviewsResolver {
   }
 
   @ResolveField(() => User)
-  async user(@Parent() review: Review): Promise<User> {
-    return this.usersService.findOneOrFail(review.userId);
+  user(@Parent() review: Review, @Context() ctx: GqlContext): Promise<User> {
+    return ctx.loaders.userById.load(review.userId) as Promise<User>;
   }
 
   @ResolveField(() => Product)
-  async product(@Parent() review: Review): Promise<Product> {
-    return this.productsService.findOneOrFail(review.productId);
+  product(
+    @Parent() review: Review,
+    @Context() ctx: GqlContext,
+  ): Promise<Product> {
+    return ctx.loaders.productById.load(review.productId) as Promise<Product>;
   }
 }

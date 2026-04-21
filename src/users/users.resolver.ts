@@ -1,25 +1,21 @@
 import {
   Args,
+  Context,
   ID,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import type { GqlContext } from '../dataloader/gql-context.interface';
 import { Order } from '../orders/entities/order.entity';
-import { OrdersService } from '../orders/orders.service';
 import { Review } from '../reviews/entities/review.entity';
-import { ReviewsService } from '../reviews/reviews.service';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly reviewsService: ReviewsService,
-    private readonly ordersService: OrdersService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Query(() => [User], { name: 'users' })
   users(): Promise<User[]> {
@@ -32,12 +28,12 @@ export class UsersResolver {
   }
 
   @ResolveField(() => [Review])
-  reviews(@Parent() user: User): Promise<Review[]> {
-    return this.reviewsService.findByUserId(user.id);
+  reviews(@Parent() user: User, @Context() ctx: GqlContext): Promise<Review[]> {
+    return ctx.loaders.reviewsByUserId.load(user.id) as Promise<Review[]>;
   }
 
   @ResolveField(() => [Order])
-  orders(@Parent() user: User): Promise<Order[]> {
-    return this.ordersService.findByUserId(user.id);
+  orders(@Parent() user: User, @Context() ctx: GqlContext): Promise<Order[]> {
+    return ctx.loaders.ordersByUserId.load(user.id) as Promise<Order[]>;
   }
 }
