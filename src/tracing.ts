@@ -24,8 +24,7 @@ if (!disabled) {
 
   const sdk = new NodeSDK({
     resource: resourceFromAttributes({
-      [ATTR_SERVICE_NAME]:
-        process.env.OTEL_SERVICE_NAME ?? 'nest-graphql-sample',
+      [ATTR_SERVICE_NAME]: process.env.OTEL_SERVICE_NAME ?? 'mock-shop-api',
     }),
     traceExporter: new OTLPTraceExporter({ url: tracesUrl }),
     logRecordProcessors: [

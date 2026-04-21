@@ -32,8 +32,12 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('nest-graphql-sample API')
-    .setDescription('REST API documentation. For GraphQL, visit /graphql.')
+    .setTitle('Mock Shop API')
+    .setDescription(
+      'Public REST API that simulates an e-commerce store. ' +
+        'Exposes products, categories, users, orders, and reviews. ' +
+        'For GraphQL access visit /graphql.',
+    )
     .setVersion('1.0')
     .addApiKey({ type: 'apiKey', in: 'header', name: 'x-api-key' }, 'x-api-key')
     .build();
