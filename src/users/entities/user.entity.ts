@@ -5,7 +5,10 @@ import { Review } from '../../reviews/entities/review.entity';
 
 @ObjectType({ description: 'A registered user of the platform' })
 export class User {
-  @ApiProperty({ description: 'Unique user identifier (CUID)', example: 'clx1abc2300001' })
+  @ApiProperty({
+    description: 'Unique user identifier (CUID)',
+    example: 'clx1abc2300001',
+  })
   @Field(() => ID, { description: 'Unique user identifier' })
   id: string;
 
@@ -17,16 +20,31 @@ export class User {
   @Field({ description: "User's last name" })
   lastName: string;
 
-  @ApiProperty({ description: "User's unique email address", example: 'jane.doe@example.com' })
+  @ApiProperty({
+    description: "User's unique email address",
+    example: 'jane.doe@example.com',
+  })
   @Field({ description: "User's unique email address" })
   email: string;
 
-  @ApiProperty({ description: 'Timestamp of the last time the user visited the platform', example: '2024-01-15T10:30:00.000Z', nullable: true })
-  @Field(() => GraphQLISODateTime, { nullable: true, description: 'Timestamp of the last platform visit' })
+  @ApiProperty({
+    description: 'Timestamp of the last time the user visited the platform',
+    example: '2024-01-15T10:30:00.000Z',
+    nullable: true,
+  })
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description: 'Timestamp of the last platform visit',
+  })
   lastVisit: Date | null;
 
-  @ApiProperty({ description: 'Account creation timestamp', example: '2023-06-01T08:00:00.000Z' })
-  @Field(() => GraphQLISODateTime, { description: 'Account creation timestamp' })
+  @ApiProperty({
+    description: 'Account creation timestamp',
+    example: '2023-06-01T08:00:00.000Z',
+  })
+  @Field(() => GraphQLISODateTime, {
+    description: 'Account creation timestamp',
+  })
   createdAt: Date;
 
   @Field(() => [Review], { description: 'All reviews written by this user' })

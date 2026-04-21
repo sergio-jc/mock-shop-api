@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import helmet from 'helmet';
 import { NestFactory } from '@nestjs/core';
+import { VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import './tracing';
@@ -26,6 +27,7 @@ async function bootstrap() {
       },
     }),
   );
+  app.enableVersioning({ type: VersioningType.URI });
   app.enableCors();
   app.enableShutdownHooks();
 

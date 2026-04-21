@@ -1,10 +1,16 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 
 @ApiTags('Products')
-@Controller('products')
+@Controller({ path: 'products', version: '1' })
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
@@ -16,7 +22,11 @@ export class ProductsController {
   }
 
   @ApiOperation({ summary: 'Get a single product by ID' })
-  @ApiParam({ name: 'id', description: 'Product CUID', example: 'clx1abc2300001' })
+  @ApiParam({
+    name: 'id',
+    description: 'Product CUID',
+    example: 'clx1abc2300001',
+  })
   @ApiOkResponse({ type: Product, description: 'The requested product' })
   @ApiNotFoundResponse({ description: 'Product not found' })
   @Get(':id')

@@ -1,10 +1,16 @@
 import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { Category } from './entities/category.entity';
 
 @ApiTags('Categories')
-@Controller('categories')
+@Controller({ path: 'categories', version: '1' })
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
@@ -16,7 +22,11 @@ export class CategoriesController {
   }
 
   @ApiOperation({ summary: 'Get a single category by ID' })
-  @ApiParam({ name: 'id', description: 'Category CUID', example: 'clx1abc2300001' })
+  @ApiParam({
+    name: 'id',
+    description: 'Category CUID',
+    example: 'clx1abc2300001',
+  })
   @ApiOkResponse({ type: Category, description: 'The requested category' })
   @ApiNotFoundResponse({ description: 'Category not found' })
   @Get(':id')

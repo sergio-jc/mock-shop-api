@@ -24,32 +24,60 @@ registerEnumType(OrderStatus, {
 
 @ObjectType({ description: 'A purchase order placed by a user' })
 export class Order {
-  @ApiProperty({ description: 'Unique order identifier (CUID)', example: 'clx1abc2300001' })
+  @ApiProperty({
+    description: 'Unique order identifier (CUID)',
+    example: 'clx1abc2300001',
+  })
   @Field(() => ID, { description: 'Unique order identifier' })
   id: string;
 
-  @ApiProperty({ description: 'ID of the user who placed this order', example: 'clx1abc2300001' })
+  @ApiProperty({
+    description: 'ID of the user who placed this order',
+    example: 'clx1abc2300001',
+  })
   userId: string;
 
   @Field(() => User, { description: 'User who placed this order' })
   user: User;
 
-  @Field(() => [OrderItem], { description: 'Line items included in this order' })
+  @Field(() => [OrderItem], {
+    description: 'Line items included in this order',
+  })
   items: OrderItem[];
 
-  @ApiProperty({ description: 'Total order value in USD (sum of quantity × unitPrice for all items)', example: 199.98 })
+  @ApiProperty({
+    description:
+      'Total order value in USD (sum of quantity × unitPrice for all items)',
+    example: 199.98,
+  })
   @Field(() => Float, { description: 'Total order value in USD' })
   total: number;
 
-  @ApiProperty({ enum: OrderStatus, description: 'Current lifecycle status of the order', example: OrderStatus.PENDING })
-  @Field(() => OrderStatus, { description: 'Current lifecycle status of the order' })
+  @ApiProperty({
+    enum: OrderStatus,
+    description: 'Current lifecycle status of the order',
+    example: OrderStatus.PENDING,
+  })
+  @Field(() => OrderStatus, {
+    description: 'Current lifecycle status of the order',
+  })
   status: OrderStatus;
 
-  @ApiProperty({ description: 'Timestamp when the order was placed', example: '2024-03-01T09:00:00.000Z' })
-  @Field(() => GraphQLISODateTime, { description: 'Timestamp when the order was placed' })
+  @ApiProperty({
+    description: 'Timestamp when the order was placed',
+    example: '2024-03-01T09:00:00.000Z',
+  })
+  @Field(() => GraphQLISODateTime, {
+    description: 'Timestamp when the order was placed',
+  })
   createdAt: Date;
 
-  @ApiProperty({ description: 'Timestamp of the last status update', example: '2024-03-02T14:00:00.000Z' })
-  @Field(() => GraphQLISODateTime, { description: 'Timestamp of the last status update' })
+  @ApiProperty({
+    description: 'Timestamp of the last status update',
+    example: '2024-03-02T14:00:00.000Z',
+  })
+  @Field(() => GraphQLISODateTime, {
+    description: 'Timestamp of the last status update',
+  })
   updatedAt: Date;
 }
