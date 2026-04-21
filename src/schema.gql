@@ -2,9 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""A product category grouping related products together"""
 type Category {
+  """Optional longer description of the category"""
   description: String
+
+  """Unique category identifier"""
   id: ID!
+
+  """Category display name"""
   name: String!
   products: [Product!]!
 }
@@ -14,39 +20,84 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""A purchase order placed by a user"""
 type Order {
+  """Timestamp when the order was placed"""
   createdAt: DateTime!
+
+  """Unique order identifier"""
   id: ID!
+
+  """Line items included in this order"""
   items: [OrderItem!]!
+
+  """Current lifecycle status of the order"""
   status: OrderStatus!
+
+  """Total order value in USD"""
   total: Float!
+
+  """Timestamp of the last status update"""
   updatedAt: DateTime!
+
+  """User who placed this order"""
   user: User!
 }
 
+"""A single line item within an order"""
 type OrderItem {
+  """Unique order item identifier"""
   id: ID!
+
+  """The product ordered"""
   product: Product!
+
+  """Number of units ordered"""
   quantity: Int!
+
+  """Price per unit at the time of purchase (USD)"""
   unitPrice: Float!
 }
 
+"""Possible lifecycle states of an order"""
 enum OrderStatus {
+  """Order was cancelled"""
   CANCELLED
+
+  """Order was successfully delivered"""
   COMPLETED
+
+  """Order placed but not yet processed"""
   PENDING
+
+  """Order is being prepared"""
   PROCESSING
 }
 
+"""A product available for purchase in the catalog"""
 type Product {
   category: Category!
+
+  """Optional detailed description of the product"""
   description: String
+
+  """Unique product identifier"""
   id: ID!
+
+  """URL to the product image"""
   imageUrl: String
+
+  """Product display name"""
   name: String!
+
+  """Price in USD"""
   price: Float!
+
+  """Average rating (1–5) computed from all reviews"""
   rating: Float
   reviews: [Review!]!
+
+  """Units currently in stock"""
   stock: Int!
 }
 
@@ -64,23 +115,53 @@ type Query {
   users: [User!]!
 }
 
+"""A user review for a specific product"""
 type Review {
+  """Optional full review text"""
   comment: String
+
+  """Timestamp when the review was submitted"""
   createdAt: DateTime!
+
+  """Unique review identifier"""
   id: ID!
+
+  """Product being reviewed"""
   product: Product!
+
+  """Rating from 1 (worst) to 5 (best)"""
   rating: Int!
+
+  """Short title summarizing the review"""
   title: String!
+
+  """User who wrote this review"""
   user: User!
 }
 
+"""A registered user of the platform"""
 type User {
+  """Account creation timestamp"""
   createdAt: DateTime!
+
+  """User's unique email address"""
   email: String!
+
+  """User's first name"""
   firstName: String!
+
+  """Unique user identifier"""
   id: ID!
+
+  """User's last name"""
   lastName: String!
+
+  """Timestamp of the last platform visit"""
   lastVisit: DateTime
+
+  """All orders placed by this user"""
   orders: [Order!]!
+
+  """All reviews written by this user"""
   reviews: [Review!]!
 }
