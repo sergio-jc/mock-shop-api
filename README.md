@@ -1,5 +1,17 @@
-# Mock Shop API
 
+
+![banner](/assets/banner.png)
+
+<p align="center">
+  <img src="https://img.shields.io/badge/NestJS-11-E0234E?style=for-the-badge&logo=nestjs" alt="NestJS 11" />
+  <img src="https://img.shields.io/badge/GraphQL-16-E10098?style=for-the-badge&logo=graphql" alt="GraphQL 16" />
+  <img src="https://img.shields.io/badge/Apollo%20Server-5-311C87?style=for-the-badge&logo=apollographql" alt="Apollo Server 5" />
+  <img src="https://img.shields.io/badge/Prisma-7-2D3748?style=for-the-badge&logo=prisma" alt="Prisma 7" />
+  <img src="https://img.shields.io/badge/Turso-LibSQL-3B82F6?style=for-the-badge" alt="Turso / LibSQL" />
+  <img src="https://img.shields.io/badge/Node.js-22-5FA04E?style=for-the-badge&logo=nodedotjs" alt="Node.js 22+" />
+</p>
+
+# 🏬 Mock Shop API
 A production-ready REST + GraphQL API that simulates an e-commerce backend. Built as a reference project to demonstrate modern Node.js architecture patterns: dual-transport APIs, N+1 prevention with DataLoader, distributed tracing with OpenTelemetry, and edge-compatible databases.
 
 **Live demo:** [mock-shop-api.onrender.com](https://mock-shop-api.onrender.com)
