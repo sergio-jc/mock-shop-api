@@ -51,6 +51,9 @@ import { OrdersModule } from './orders/orders.module';
             ? true
             : join(process.cwd(), 'src/schema.gql'),
         sortSchema: true,
+        // Introspection allows clients and GraphiQL to discover the schema.
+        // Enabled intentionally — this is a public API.
+        introspection: true,
         playground: false,
         graphiql: true,
         validationRules: [depthLimit(6)],
